@@ -55,13 +55,13 @@ namespace CoreLib.Application.Cryptography
         /// <summary>
         /// Signs provided hash value.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"><see cref="HashAlgorithm"/> used to compute signature.</typeparam>
         /// <param name="inputBytes">Data to be encrypted.</param>
         /// <param name="xmlKeyString">Asymmetric key in xml <see cref="string"/> format.</param>
         /// <returns>The signed hash value.</returns>
         /// <remarks>
-        /// Signing of data should be done to the hash value of data. The signing uses the public key
-        /// 
+        ///     Signing of data should be done to the hash value of data. The public key is used
+        ///     to generate the signature.
         /// </remarks>
         /// <seealso cref="AsymmetricCryptoService.GetXMLKeys(string, bool)"/>
         public static byte[] SignData<T>(byte[] inputBytes, string xmlKeyString) where T : HashAlgorithm, new()
@@ -77,15 +77,16 @@ namespace CoreLib.Application.Cryptography
         }
 
         /// <summary>
-        //     Verifies that a digital signature is valid by determining the hash value in the
-        //     signature using the provided public key and comparing it to the hash value of
-        //     the provided data.
+        ///     Verifies that a digital signature is valid by determining the hash value in the
+        ///     signature using the provided public key and comparing it to the hash value of
+        ///     the provided data.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"><see cref="HashAlgorithm"/> used to compute signature.</typeparam>
         /// <param name="inputBytes">The data that was signed.</param>
         /// <param name="xmlKeyString">Asymmetric key in xml <see cref="string"/> format.</param>
         /// <param name="signature">The signature data to be verified.</param>
         /// <returns><c>true</c> if the signature is valid; otherwise, <c>false</c>.</returns>
+        /// <remarks>The private key is used to verify signature.</remarks>
         public static bool VerifyData<T>(byte[] inputBytes, string xmlKeyString, byte[] signature) where T : HashAlgorithm, new()
         {
             if(inputBytes is null)
@@ -102,6 +103,12 @@ namespace CoreLib.Application.Cryptography
             }
         }
 
+        /// <summary>
+        /// Generates an asemmetric encryption key.
+        /// </summary>
+        /// <param name="keyNumber">Specifies whether to generate an asemmetric exchange or 
+        /// signature key.</param>
+        /// <returns>A generated key.</returns>
         public static string GenerateXMLKeys(KeyNumber keyNumber = KeyNumber.Exchange)
         {
             var cspParameter = new CspParameters();
@@ -112,6 +119,13 @@ namespace CoreLib.Application.Cryptography
                 return cryptoService.ToXmlString(true);
         }
 
+        /// <summary>
+        /// Stores key in a container.
+        /// </summary>
+        /// <param name="containerName">Name of the container.</param>
+        /// <param name="xmlStringKeys">Asymmetric key in xml <see cref="string"/> format.</param>
+        /// <param name="useMachineKeyStore">Specify weather to save container in the machine's keystore 
+        /// opposed to the user keystore.</param>
         public static void StoreXMLKeys(string containerName, string xmlStringKeys, bool useMachineKeyStore = false)
         {
             if(string.IsNullOrEmpty(containerName))
@@ -129,6 +143,13 @@ namespace CoreLib.Application.Cryptography
                 cryptoService.FromXmlString(xmlStringKeys);
         }
 
+        /// <summary>
+        /// Retrieve key from container.
+        /// </summary>
+        /// <param name="containerName">Name of container.</param>
+        /// <param name="includePrivateKey"><c>true</c> to include both public and private key; 
+        /// <c>false</c> for a public key only</param>
+        /// <returns>XML string containing asymmetric key.</returns>
         public static string GetXMLKeys(string containerName, bool includePrivateKey = false)
         {
             if(string.IsNullOrEmpty(containerName))
@@ -141,6 +162,10 @@ namespace CoreLib.Application.Cryptography
                 return cryptoService.ToXmlString(includePrivateKey);
         }
 
+        /// <summary>
+        /// Deletes key container.
+        /// </summary>
+        /// <param name="containerName">Name of container.</param>
         public static void DeleteKey(string containerName)
         {
             if(string.IsNullOrEmpty(containerName))
