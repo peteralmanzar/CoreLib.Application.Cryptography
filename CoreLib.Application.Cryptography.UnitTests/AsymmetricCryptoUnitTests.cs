@@ -1,6 +1,6 @@
 ﻿using CoreLib.Application.Cryptography.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Security;
+using System.Security.Cryptography;
 
 namespace CoreLib.Application.Cryptography.UnitTests
 {
@@ -19,15 +19,20 @@ namespace CoreLib.Application.Cryptography.UnitTests
         public void Encrypt_DecryptionEqualsEncrytionData()
         {
             byte[] encryptedData;
-            byte[] decryptedData;
+            byte[] decryptedData;            
             
-            using(var cryptoService = new AsymmetricCryptoService())
-                encryptedData = cryptoService.Encrypt(_clearData.ToBytes(), _assemetricXMLString);
-
-            using(var cryptoService = new AsymmetricCryptoService())
-                decryptedData = cryptoService.Decrypt(encryptedData, _assemetricXMLString);
+            encryptedData = AsymmetricCryptoService.Encrypt(_clearData.ToBytes(), _assemetricXMLString);            
+            decryptedData = AsymmetricCryptoService.Decrypt(encryptedData, _assemetricXMLString);
 
             Assert.AreEqual(_clearData, decryptedData.ToStringUTF8());
+        }
+
+        public void Sign_VerifySignature()
+        {
+            byte[] signature = AsymmetricCryptoService.SignData<SHA256CryptoServiceProvider>(_clearData.ToBytes(), _assemetricXMLString);
+            var signatureVerification = AsymmetricCryptoService.VerifyData<SHA256CryptoServiceProvider>(_clearData.ToBytes(), _assemetricXMLString, signature);
+
+            Assert.IsTrue(signatureVerification);
         }
         #endregion
     }

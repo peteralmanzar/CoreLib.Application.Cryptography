@@ -6,7 +6,7 @@ namespace CoreLib.Application.Cryptography
     /// <summary>
     /// Provides methods to protect data using  current user or machine profiles.
     /// </summary>
-    public static class LocalUserDataProtector
+    public static class DataProtectorService
     {
         #region Public Methods
         /// <summary>

@@ -21,44 +21,36 @@ namespace CoreLib.Application.Cryptography.UnitTests
         [TestMethod]
         public void Hash_CorrectMD5Hash()
         {
-            byte[] generatedHash = hashUsing<MD5CryptoServiceProvider>(_clearData);
+            byte[] generatedHash = HashingService.ComputeHash<MD5CryptoServiceProvider>(_clearData.ToBytes());
             Assert.AreEqual(_md5Hash, generatedHash.ToStringBit());
         }
 
         [TestMethod]
         public void Hash_CorrentSHA1Hash()
         {
-            byte[] generatedHash = hashUsing<SHA1CryptoServiceProvider>(_clearData);
+            byte[] generatedHash = HashingService.ComputeHash<SHA1CryptoServiceProvider>(_clearData.ToBytes());
             Assert.AreEqual(_sha1Hash, generatedHash.ToStringBit());
         }
 
         [TestMethod]
         public void Hash_CorrentSHA256Hash()
         {
-            byte[] generatedHash = hashUsing<SHA256CryptoServiceProvider>(_clearData);
+            byte[] generatedHash = HashingService.ComputeHash<SHA256CryptoServiceProvider>(_clearData.ToBytes());
             Assert.AreEqual(_sha256Hash, generatedHash.ToStringBit());
         }
 
         [TestMethod]
         public void Hash_CorrentSHA384Hash()
         {
-            byte[] generatedHash = hashUsing<SHA384CryptoServiceProvider>(_clearData);
+            byte[] generatedHash = HashingService.ComputeHash<SHA384CryptoServiceProvider>(_clearData.ToBytes());
             Assert.AreEqual(_sha384Hash, generatedHash.ToStringBit());
         }
 
         [TestMethod]
         public void Hash_CorrentSHA512Hash()
         {
-            byte[] generatedHash = hashUsing<SHA512CryptoServiceProvider>(_clearData);
+            byte[] generatedHash = HashingService.ComputeHash<SHA512CryptoServiceProvider>(_clearData.ToBytes());
             Assert.AreEqual(_sha512Hash, generatedHash.ToStringBit());
-        }
-        #endregion
-
-        #region Private Methods
-        private byte[] hashUsing<T>(string clearData) where T : HashAlgorithm, new()
-        {
-            using(var hashingService = new HashingService<T>())
-                return hashingService.ComputeHash(_clearData.ToBytes());
         }
         #endregion
     }
